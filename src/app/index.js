@@ -15,7 +15,11 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('api/v1/auth', authRouter);
-app.use('api/v1/users', usersRouter);
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', usersRouter);
+
+app.use((req, res, next) => {
+	res.boom.notFound();
+});
 
 export default app;
