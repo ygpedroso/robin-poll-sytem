@@ -5,6 +5,7 @@ import boom from 'express-boom';
 import initDB from './../config/database';
 import authRouter from '../routes/auth';
 import usersRouter from './../routes/users';
+import pollsRouter from './../routes/polls';
 import './../config/passport-local';
 
 initDB();
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/polls', pollsRouter);
 
 app.use((_, res, next) => {
 	res.boom.notFound();
