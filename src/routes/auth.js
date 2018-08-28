@@ -1,27 +1,33 @@
 import express from 'express';
-import { check, validationResult } from 'express-validator/check';
+import { body, validationResult } from 'express-validator/check';
 import User from './../models/User';
 
 const router = express.Router();
 
 router.post(
 	'/register',
-	[check('email').isEmail(), check('password').isLength({ min: 5 })],
+	[body('email').isEmail(), body('password').isLength({ min: 5 })],
 	(req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			res.boom.badRequest(errors.array());
+			res.boom.badRequest();
+		} else {
+			User.create(
+				{
+					email: req.body.email,
+					password: req.body.password,
+				},
+				(err, user) => {
+					if (err) {
+						res.boom.conflict(err);
+					} else {
+						res.status(200).json({
+							user: user.email,
+						});
+					}
+				}
+			);
 		}
-		User.create(
-			{
-				email: req.body.email,
-				password: req.body.password,
-			},
-			(err, user) => {
-				if (err) res.boom.badImplementation(err);
-				return res.status(200).send();
-			}
-		);
 	}
 );
 
