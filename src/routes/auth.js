@@ -10,7 +10,7 @@ router.post(
 	(req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			res.boom.badRequest();
+			res.status(400).json({ errors: errors.array() });
 		} else {
 			User.create(
 				{
