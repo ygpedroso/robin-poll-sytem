@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "name": "robin-poll-system",
+      "watch": false,
+      "script": "./dist/server.js",
+      "exec_mode": "cluster",
+      "instances": 0
+    }
+  ]
+}
