@@ -27,4 +27,6 @@ const Vote = new Schema(
 	{ timestamps: true }
 );
 
+Vote.index({ byUser: 1, inPoll: 1 }, { unique: true });
+
 export default mongoose.model(VoteSchemaName, Vote);
