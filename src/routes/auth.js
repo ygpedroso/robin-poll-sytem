@@ -54,7 +54,9 @@ router.post('/login', function(req, res, _) {
 				id: user.id,
 				email: user.email,
 			};
-			const token = jwt.sign(payload, process.env.JWT_SECRET);
+			const token = jwt.sign(payload, process.env.JWT_SECRET, {
+				expiresIn: 86400,
+			});
 			return res.json({ token });
 		});
 	})(req, res);
