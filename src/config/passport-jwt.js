@@ -8,7 +8,7 @@ passport.use(
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: process.env.JWT_SECRET,
 		},
-		function(jwtPayload, cb) {
+		(jwtPayload, cb) => {
 			return User.findById(jwtPayload.id)
 				.then(user => {
 					return cb(null, user.getNotSensitiveData());
