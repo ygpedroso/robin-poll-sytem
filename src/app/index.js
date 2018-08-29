@@ -22,8 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', passport.authenticate('jwt', { session: false }), usersRouter);
-app.use('/api/v1/polls', pollsRouter);
-app.use('/api/v1/polls/:pollId/options', pollsOptionsRouter);
+app.use('/api/v1/polls', pollsRouter, pollsOptionsRouter);
 
 app.use((_, res, next) => {
 	res.boom.notFound();
