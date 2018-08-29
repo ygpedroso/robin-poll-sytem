@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { PollSchemaName } from './Poll';
+import { UserSchemaName } from './User';
 
 const Schema = mongoose.Schema;
 export const PollOptionSchemaName = 'PollOption';
@@ -14,6 +15,11 @@ const PollOption = new Schema(
 		pollId: {
 			type: Schema.Types.ObjectId,
 			ref: PollSchemaName,
+			required: true,
+		},
+		createdBy: {
+			type: Schema.Types.ObjectId,
+			ref: UserSchemaName,
 			required: true,
 		},
 	},
