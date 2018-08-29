@@ -23,9 +23,7 @@ router.post(
 					if (err) {
 						res.status(500).json({ error: err });
 					} else {
-						res.status(200).json({
-							user: user.email,
-						});
+						res.status(200).send(user.getNotSensitiveData());
 					}
 				}
 			);
