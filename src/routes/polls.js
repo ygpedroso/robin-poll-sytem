@@ -47,7 +47,7 @@ router.post(
 						err,
 					});
 				}
-				return res.send(poll);
+				return res.status(201).send(poll);
 			});
 		}
 	}
