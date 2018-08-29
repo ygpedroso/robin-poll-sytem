@@ -4,6 +4,8 @@ import cors from 'cors';
 import boom from 'express-boom';
 import passport from 'passport';
 import initDB from './../config/database';
+import errorHandler from './../middlewares/errorHandler';
+import notFoundHandler from './../middlewares/notFoundHandler';
 import authRouter from '../routes/auth';
 import usersRouter from './../routes/users';
 import pollsRouter from './../routes/polls';
@@ -24,8 +26,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', passport.authenticate('jwt', { session: false }), usersRouter);
 app.use('/api/v1/polls', pollsRouter, pollsOptionsRouter);
 
-app.use((_, res, next) => {
-	res.boom.notFound();
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
