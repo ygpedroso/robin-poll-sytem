@@ -39,4 +39,42 @@ router.get('/:pollId/votes/:voteId', (req, res, next) => {
 		});
 });
 
+router.post(
+	'/:pollId/options/:pollOptionId/votes',
+	passport.authenticate('jwt', { session: false }),
+	(req, res, next) => {
+		Poll.findById(req.params.pollId, (err, poll) => {
+			if (err) {
+				return next(err);
+			}
+			if (!poll) {
+				res.boom.notFound('Poll Resource not found');
+			} else {
+				PollOption.findById(req.params.pollOptionId, (err, pollOption) => {
+					if (err) {
+						return next(err);
+					}
+					if (!pollOption) {
+						res.boom.notFound('Poll Option Resource not found');
+					} else {
+						Vote.create(
+							{
+								byUser: req.user.id,
+								inPoll: poll.id,
+								forOption: pollOption.id,
+							},
+							(err, vote) => {
+								if (err) {
+									return next(err);
+								}
+								res.send(vote);
+							}
+						);
+					}
+				});
+			}
+		});
+	}
+);
+
 export default router;
