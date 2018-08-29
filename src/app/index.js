@@ -7,6 +7,7 @@ import initDB from './../config/database';
 import authRouter from '../routes/auth';
 import usersRouter from './../routes/users';
 import pollsRouter from './../routes/polls';
+import pollsOptionsRouter from './../routes/pollsOptions';
 import './../config/passport-local';
 import './../config/passport-jwt';
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', passport.authenticate('jwt', { session: false }), usersRouter);
 app.use('/api/v1/polls', pollsRouter);
+app.use('/api/v1/polls/:pollId/options', pollsOptionsRouter);
 
 app.use((_, res, next) => {
 	res.boom.notFound();
