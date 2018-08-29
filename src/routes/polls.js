@@ -16,6 +16,21 @@ router.get('/', (req, res) => {
 	});
 });
 
+router.get('/:id', (req, res) => {
+	Poll.findById(req.params.id, (err, poll) => {
+		if (err) {
+			return res.status(500).json({
+				message: 'Something went wrong',
+				err,
+			});
+		}
+		if (!poll) {
+			return res.boom.notFound();
+		}
+		return res.send(poll);
+	});
+});
+
 router.post(
 	'/',
 	passport.authenticate('jwt', { session: false }),
