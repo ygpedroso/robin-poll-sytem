@@ -45,22 +45,24 @@ router.post(
 				res.status(201).send(poll);
 			});
 		}
-	},
+	}
 );
 
 router.post('/:id/close', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-	Poll.findById(req.params.id, (err, poll) => {
-		if (err) {
-			return next(err);
-		}
-		if (!poll) {
-			res.boom.notFound('Poll Resource not found');
-		} else {
-			poll.open = false;
-			poll.save();
-			res.send(poll);
-		}
-	});
+	Poll.findById(req.params.id)
+		.populate('createdBy')
+		.exec((err, poll) => {
+			if (err) {
+				return next(err);
+			}
+			if (!poll) {
+				res.boom.notFound('Poll Resource not found');
+			} else {
+				poll.open = false;
+				poll.save();
+				res.send(poll);
+			}
+		});
 });
 
 export default router;
