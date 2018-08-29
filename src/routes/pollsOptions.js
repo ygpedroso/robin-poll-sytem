@@ -1,7 +1,6 @@
 import express from 'express';
 import passport from 'passport';
 import Poll from '../models/Poll';
-import status500 from '../status/500';
 import PollOption from '../models/PollOption';
 import { body, validationResult } from 'express-validator/check/index';
 
@@ -10,21 +9,21 @@ const router = express.Router({});
 router.get('/:pollId/options', (req, res) => {
 	PollOption.find({ pollId: req.params.pollId }, (err, pollOptions) => {
 		if (err) {
-			status500(res, err);
+			res.boom.badImplementation('This is probably our fault', { data: err });
 		}
-		return res.send(pollOptions);
+		res.send(pollOptions);
 	});
 });
 
 router.get('/:pollId/options/:id', (req, res) => {
 	PollOption.findById(req.params.id, (err, pollOption) => {
 		if (err) {
-			status500(res, err);
+			res.boom.badImplementation('This is probably our fault', { data: err });
 		}
 		if (!pollOption) {
-			return res.boom.notFound();
+			res.boom.notFound('Poll Option Resource not found');
 		}
-		return res.send(pollOption);
+		res.send(pollOption);
 	});
 });
 
@@ -35,19 +34,19 @@ router.post(
 	(req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			res.status(400).json({ errors: errors.array() });
+			res.boom.badRequest('Invalid params', { data: errors.array() });
 		} else {
 			Poll.findById(req.params.pollId, (err, poll) => {
 				if (err) {
-					status500(res, err);
+					res.boom.badImplementation('This is probably our fault', { data: err });
 				}
 				PollOption.create(
 					{ value: req.body.value, pollId: poll.id, createdBy: req.user.id },
 					(err, pollOption) => {
 						if (err) {
-							status500(res, err);
+							res.boom.badImplementation('This is probably our fault', { data: err });
 						}
-						return res.status(201).send(pollOption);
+						res.status(201).send(pollOption);
 					}
 				);
 			});

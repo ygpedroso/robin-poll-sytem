@@ -3,7 +3,6 @@ import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator/check';
 import User from './../models/User';
-import status500 from './../status/500';
 
 const router = express.Router({});
 
@@ -13,7 +12,7 @@ router.post(
 	(req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			res.status(400).json({ errors: errors.array() });
+			res.boom.badRequest('Invalid params', { data: errors.array() });
 		} else {
 			User.create(
 				{
@@ -22,7 +21,7 @@ router.post(
 				},
 				(err, user) => {
 					if (err) {
-						res.status(500).json({ error: err });
+						res.boom.badImplementation('This is probably our fault', { data: err });
 					} else {
 						res.status(201).send(user.getNotSensitiveData());
 					}
@@ -35,16 +34,14 @@ router.post(
 router.post('/login', (req, res, _) => {
 	passport.authenticate('local', { session: false }, (err, user, info) => {
 		if (err) {
-			status500(res, err);
+			res.boom.badImplementation('This is probably our fault', { data: err });
 		}
 		if (!user) {
-			return res.status(400).json({
-				message: info.message,
-			});
+			res.boom.badRequest(info.message);
 		}
 		req.login(user, { session: false }, err => {
 			if (err) {
-				return res.send(err);
+				res.boom.badImplementation('This is probably our fault', { data: err });
 			}
 			const payload = {
 				id: user.id,
@@ -53,7 +50,7 @@ router.post('/login', (req, res, _) => {
 			const token = jwt.sign(payload, process.env.JWT_SECRET, {
 				expiresIn: 86400,
 			});
-			return res.json({ token });
+			res.send({ token });
 		});
 	})(req, res);
 });

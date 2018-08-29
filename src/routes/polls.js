@@ -2,29 +2,25 @@ import express from 'express';
 import passport from 'passport';
 import { body, validationResult } from 'express-validator/check';
 import Poll from './../models/Poll';
-import status500 from './../status/500';
 
 const router = express.Router({});
 
 router.get('/', (req, res) => {
 	Poll.find({}, (err, polls) => {
 		if (err) {
-			return res.status(500).json({
-				message: 'Something went wrong',
-				err,
-			});
+			res.boom.badImplementation('This is probably our fault', { data: err });
 		}
-		return res.send(polls);
+		res.send(polls);
 	});
 });
 
 router.get('/:id', (req, res) => {
 	Poll.findById(req.params.id, (err, poll) => {
 		if (err) {
-			status500(res, err);
+			res.boom.badImplementation('This is probably our fault', { data: err });
 		}
 		if (!poll) {
-			return res.boom.notFound();
+			res.boom.notFound('Poll Resource not found');
 		}
 		return res.send(poll);
 	});
@@ -37,13 +33,13 @@ router.post(
 	(req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			res.status(400).json({ errors: errors.array() });
+			res.boom.badRequest('Invalid params', { data: errors.array() });
 		} else {
 			Poll.create({ title: req.body.title, createdBy: req.user.id }, (err, poll) => {
 				if (err) {
-					status500(res, err);
+					res.boom.badImplementation('This is probably our fault', { data: err });
 				}
-				return res.status(201).send(poll);
+				res.status(201).send(poll);
 			});
 		}
 	}
@@ -52,14 +48,14 @@ router.post(
 router.post('/:id/close', passport.authenticate('jwt', { session: false }), (req, res) => {
 	Poll.findById(req.params.id, (err, poll) => {
 		if (err) {
-			status500(res, err);
+			res.boom.badImplementation('This is probably our fault', { data: err });
 		}
 		if (!poll) {
-			return res.boom.notFound();
+			res.boom.notFound('Poll Resource not found');
 		}
 		poll.open = false;
 		poll.save();
-		return res.send(poll);
+		res.send(poll);
 	});
 });
 
