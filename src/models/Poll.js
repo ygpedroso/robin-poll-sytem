@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { UserSchemaName } from './../models/User';
 
 const Schema = mongoose.Schema;
 export const PollSchemaName = 'Poll';
@@ -9,6 +10,11 @@ const PollSchema = new Schema(
 			type: String,
 			required: true,
 			index: true,
+		},
+		createdBy: {
+			type: Schema.Types.ObjectId,
+			ref: UserSchemaName,
+			required: true,
 		},
 		open: {
 			type: Boolean,
