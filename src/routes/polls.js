@@ -1,8 +1,17 @@
 import express from 'express';
-const router = express.Router();
+import Poll from './../models/Poll';
+const router = express.Router({});
 
-router.get('/', function(req, res) {
-	res.boom.notFound();
+router.get('/', (req, res) => {
+	Poll.find({}, (err, polls) => {
+		if (err) {
+			return res.status(500).json({
+				message: 'Something went wrong',
+				err,
+			});
+		}
+		return res.send(polls);
+	});
 });
 
 export default router;
