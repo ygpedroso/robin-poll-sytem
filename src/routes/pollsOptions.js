@@ -49,8 +49,6 @@ router.post(
 						err,
 					});
 				}
-				console.log(req.params.pollId);
-				console.log(poll);
 				PollOption.create(
 					{ value: req.body.value, pollId: poll.id, createdBy: req.user.id },
 					(err, pollOption) => {
@@ -60,7 +58,7 @@ router.post(
 								err,
 							});
 						}
-						return res.send(pollOption);
+						return res.status(201).send(pollOption);
 					}
 				);
 			});
