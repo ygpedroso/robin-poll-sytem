@@ -8,14 +8,13 @@ passport.use(
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: process.env.JWT_SECRET,
 		},
-		(jwtPayload, cb) => {
-			return User.findById(jwtPayload.id)
-				.then(user => {
-					return cb(null, user.getNotSensitiveData());
-				})
-				.catch(err => {
-					return cb(err);
-				});
+		(jwtPayload, done) => {
+			User.findById(jwtPayload.id, (err, user) => {
+				if (err || !user) {
+					return done(err);
+				}
+				return done(null, user.getNotSensitiveData());
+			});
 		}
 	)
 );
