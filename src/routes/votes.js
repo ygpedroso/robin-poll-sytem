@@ -3,12 +3,11 @@ import passport from 'passport';
 import Poll from '../models/Poll';
 import PollOption from '../models/PollOption';
 import Vote from '../models/Vote';
-import { body, validationResult } from 'express-validator/check/index';
 
 const router = express.Router({});
 
 router.get('/:pollId/votes', (req, res, next) => {
-	Poll.find({ pollId: req.params.pollId }, (err, poll) => {
+	Poll.findById(req.params.pollId, (err, poll) => {
 		if (err) {
 			return next(err);
 		}
@@ -25,6 +24,19 @@ router.get('/:pollId/votes', (req, res, next) => {
 				});
 		}
 	});
+});
+
+router.get('/:pollId/votes/:voteId', (req, res, next) => {
+	Vote.findById(req.params.voteId)
+		.populate('byUser')
+		.populate('inPoll')
+		.populate('forOption')
+		.exec((err, vote) => {
+			if (err) {
+				return next(err);
+			}
+			res.send(vote);
+		});
 });
 
 export default router;
