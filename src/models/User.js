@@ -46,4 +46,14 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
 	});
 };
 
+UserSchema.methods.getNotSensitiveData = function() {
+	const user = this;
+	return {
+		id: user.id,
+		email: user.email,
+		createdAt: user.createdAt,
+		updatedAt: user.updatedAt,
+	};
+};
+
 export default mongoose.model(UserSchemaName, UserSchema);
