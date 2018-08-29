@@ -16,7 +16,7 @@ const initDB = () => {
 			.then(() => logger.info('Database connection established'))
 			.catch(e => logger.error(e.message));
 	} catch (e) {
-		console.error(e.message);
+		logger.error(e.message);
 	}
 };
 
