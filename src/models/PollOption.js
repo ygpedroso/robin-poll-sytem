@@ -10,6 +10,7 @@ const PollOption = new Schema(
 		value: {
 			type: String,
 			required: true,
+			unique: true,
 			index: true,
 		},
 		pollId: {
