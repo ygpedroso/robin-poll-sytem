@@ -9,7 +9,7 @@ const router = express.Router({});
 router.post(
 	'/register',
 	[body('email').isEmail(), body('password').isLength({ min: 5 })],
-	(req, res) => {
+	(req, res, next) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			res.boom.badRequest('Invalid params', { data: errors.array() });
@@ -21,7 +21,7 @@ router.post(
 				},
 				(err, user) => {
 					if (err) {
-						res.boom.badImplementation('This is probably our fault', { data: err });
+						next(err);
 					} else {
 						res.status(201).send(user.getNotSensitiveData());
 					}
@@ -31,17 +31,17 @@ router.post(
 	}
 );
 
-router.post('/login', (req, res, _) => {
+router.post('/login', (req, res, next) => {
 	passport.authenticate('local', { session: false }, (err, user, info) => {
 		if (err) {
-			res.boom.badImplementation('This is probably our fault', { data: err });
+			next(err);
 		}
 		if (!user) {
 			res.boom.badRequest(info.message);
 		}
 		req.login(user, { session: false }, err => {
 			if (err) {
-				res.boom.badImplementation('This is probably our fault', { data: err });
+				next(err);
 			}
 			const payload = {
 				id: user.id,
