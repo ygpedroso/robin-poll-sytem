@@ -53,4 +53,21 @@ router.post(
 	}
 );
 
+router.post('/:id/close', passport.authenticate('jwt', { session: false }), (req, res) => {
+	Poll.findById(req.params.id, (err, poll) => {
+		if (err) {
+			return res.status(500).json({
+				message: 'Something went wrong',
+				err,
+			});
+		}
+		if (!poll) {
+			return res.boom.notFound();
+		}
+		poll.open = false;
+		poll.save();
+		return res.send(poll);
+	});
+});
+
 export default router;
