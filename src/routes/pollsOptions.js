@@ -7,7 +7,6 @@ import passport from 'passport/lib/index';
 const router = express.Router({});
 
 router.get('/:pollId/options', (req, res) => {
-	console.log(req.params.pollId);
 	PollOption.find({ pollId: req.params.pollId }, (err, pollOptions) => {
 		if (err) {
 			return res.status(500).json({
@@ -16,6 +15,21 @@ router.get('/:pollId/options', (req, res) => {
 			});
 		}
 		return res.send(pollOptions);
+	});
+});
+
+router.get('/:pollId/options/:id', (req, res) => {
+	PollOption.findById(req.params.id, (err, pollOption) => {
+		if (err) {
+			return res.status(500).json({
+				message: 'Something went wrong',
+				err,
+			});
+		}
+		if (!pollOption) {
+			return res.boom.notFound();
+		}
+		return res.send(pollOption);
 	});
 });
 
