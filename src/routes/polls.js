@@ -2,6 +2,8 @@ import express from 'express';
 import passport from 'passport';
 import { body, validationResult } from 'express-validator/check';
 import Poll from './../models/Poll';
+import status500 from './../status/500';
+
 const router = express.Router({});
 
 router.get('/', (req, res) => {
@@ -19,10 +21,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
 	Poll.findById(req.params.id, (err, poll) => {
 		if (err) {
-			return res.status(500).json({
-				message: 'Something went wrong',
-				err,
-			});
+			status500(res, err);
 		}
 		if (!poll) {
 			return res.boom.notFound();
@@ -42,10 +41,7 @@ router.post(
 		} else {
 			Poll.create({ title: req.body.title, createdBy: req.user.id }, (err, poll) => {
 				if (err) {
-					return res.status(500).json({
-						message: 'Something went wrong',
-						err,
-					});
+					status500(res, err);
 				}
 				return res.status(201).send(poll);
 			});
@@ -56,10 +52,7 @@ router.post(
 router.post('/:id/close', passport.authenticate('jwt', { session: false }), (req, res) => {
 	Poll.findById(req.params.id, (err, poll) => {
 		if (err) {
-			return res.status(500).json({
-				message: 'Something went wrong',
-				err,
-			});
+			status500(res, err);
 		}
 		if (!poll) {
 			return res.boom.notFound();

@@ -3,6 +3,7 @@ import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator/check';
 import User from './../models/User';
+import status500 from './../status/500';
 
 const router = express.Router({});
 
@@ -34,10 +35,7 @@ router.post(
 router.post('/login', (req, res, _) => {
 	passport.authenticate('local', { session: false }, (err, user, info) => {
 		if (err) {
-			return res.status(500).json({
-				message: 'Something went wrong',
-				err,
-			});
+			status500(res, err);
 		}
 		if (!user) {
 			return res.status(400).json({

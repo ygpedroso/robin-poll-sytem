@@ -1,18 +1,16 @@
 import express from 'express';
+import passport from 'passport';
 import Poll from '../models/Poll';
+import status500 from '../status/500';
 import PollOption from '../models/PollOption';
 import { body, validationResult } from 'express-validator/check/index';
-import passport from 'passport/lib/index';
 
 const router = express.Router({});
 
 router.get('/:pollId/options', (req, res) => {
 	PollOption.find({ pollId: req.params.pollId }, (err, pollOptions) => {
 		if (err) {
-			return res.status(500).json({
-				message: 'Something went wrong',
-				err,
-			});
+			status500(res, err);
 		}
 		return res.send(pollOptions);
 	});
@@ -21,10 +19,7 @@ router.get('/:pollId/options', (req, res) => {
 router.get('/:pollId/options/:id', (req, res) => {
 	PollOption.findById(req.params.id, (err, pollOption) => {
 		if (err) {
-			return res.status(500).json({
-				message: 'Something went wrong',
-				err,
-			});
+			status500(res, err);
 		}
 		if (!pollOption) {
 			return res.boom.notFound();
@@ -44,19 +39,13 @@ router.post(
 		} else {
 			Poll.findById(req.params.pollId, (err, poll) => {
 				if (err) {
-					return res.status(500).json({
-						message: 'Something went wrong',
-						err,
-					});
+					status500(res, err);
 				}
 				PollOption.create(
 					{ value: req.body.value, pollId: poll.id, createdBy: req.user.id },
 					(err, pollOption) => {
 						if (err) {
-							return res.status(500).json({
-								message: 'Something went wrong',
-								err,
-							});
+							status500(res, err);
 						}
 						return res.status(201).send(pollOption);
 					}
