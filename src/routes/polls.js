@@ -1,4 +1,6 @@
 import express from 'express';
+import passport from 'passport';
+import { body, validationResult } from 'express-validator/check';
 import Poll from './../models/Poll';
 const router = express.Router({});
 
@@ -13,5 +15,27 @@ router.get('/', (req, res) => {
 		return res.send(polls);
 	});
 });
+
+router.post(
+	'/',
+	passport.authenticate('jwt', { session: false }),
+	[body('title').isLength({ min: 1 })],
+	(req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			res.status(400).json({ errors: errors.array() });
+		} else {
+			Poll.create({ title: req.body.title, createdBy: req.user.id }, (err, poll) => {
+				if (err) {
+					return res.status(500).json({
+						message: 'Something went wrong',
+						err,
+					});
+				}
+				return res.send(poll);
+			});
+		}
+	}
+);
 
 export default router;
