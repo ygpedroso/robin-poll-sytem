@@ -17,4 +17,4 @@ are needed for running the application.
 1. Run application Tests + coverage `npm run test:coverage`
 
 ## Robin Poll System production url:
-1. Base Url: [https://robin-poll-system.herokuapp.com/](https://rideco-grocery-frontend.herokuapp.com/)
+1. Base Url: [https://robin-poll-system.herokuapp.com/](https://robin-poll-system.herokuapp.com/)
