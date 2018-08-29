@@ -8,22 +8,25 @@ const router = express.Router({});
 router.get('/', (req, res, next) => {
 	Poll.find({}, (err, polls) => {
 		if (err) {
-			next(err);
+			return next(err);
 		}
 		res.send(polls);
 	});
 });
 
 router.get('/:id', (req, res, next) => {
-	Poll.findById(req.params.id, (err, poll) => {
-		if (err) {
-			next(err);
-		}
-		if (!poll) {
-			res.boom.notFound('Poll Resource not found');
-		}
-		return res.send(poll);
-	});
+	Poll.findById(req.params.id)
+		.populate('createdBy')
+		.exec((err, poll) => {
+			if (err) {
+				return next(err);
+			}
+			if (!poll) {
+				res.boom.notFound('Poll Resource not found');
+			} else {
+				return res.send(poll);
+			}
+		});
 });
 
 router.post(
@@ -37,25 +40,26 @@ router.post(
 		} else {
 			Poll.create({ title: req.body.title, createdBy: req.user.id }, (err, poll) => {
 				if (err) {
-					next(err);
+					return next(err);
 				}
 				res.status(201).send(poll);
 			});
 		}
-	}
+	},
 );
 
 router.post('/:id/close', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 	Poll.findById(req.params.id, (err, poll) => {
 		if (err) {
-			next(err);
+			return next(err);
 		}
 		if (!poll) {
 			res.boom.notFound('Poll Resource not found');
+		} else {
+			poll.open = false;
+			poll.save();
+			res.send(poll);
 		}
-		poll.open = false;
-		poll.save();
-		res.send(poll);
 	});
 });
 

@@ -21,7 +21,7 @@ router.post(
 				},
 				(err, user) => {
 					if (err) {
-						next(err);
+						return next(err);
 					} else {
 						res.status(201).send(user.getNotSensitiveData());
 					}
@@ -34,24 +34,25 @@ router.post(
 router.post('/login', (req, res, next) => {
 	passport.authenticate('local', { session: false }, (err, user, info) => {
 		if (err) {
-			next(err);
+			return next(err);
 		}
 		if (!user) {
 			res.boom.badRequest(info.message);
-		}
-		req.login(user, { session: false }, err => {
-			if (err) {
-				next(err);
-			}
-			const payload = {
-				id: user.id,
-				email: user.email,
-			};
-			const token = jwt.sign(payload, process.env.JWT_SECRET, {
-				expiresIn: 86400,
+		} else {
+			req.login(user, { session: false }, err => {
+				if (err) {
+					return next(err);
+				}
+				const payload = {
+					id: user.id,
+					email: user.email,
+				};
+				const token = jwt.sign(payload, process.env.JWT_SECRET, {
+					expiresIn: 86400,
+				});
+				res.send({ token });
 			});
-			res.send({ token });
-		});
+		}
 	})(req, res);
 });
 

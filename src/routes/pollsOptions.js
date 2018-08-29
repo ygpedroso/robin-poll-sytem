@@ -9,22 +9,25 @@ const router = express.Router({});
 router.get('/:pollId/options', (req, res, next) => {
 	PollOption.find({ pollId: req.params.pollId }, (err, pollOptions) => {
 		if (err) {
-			next(err);
+			return next(err);
 		}
 		res.send(pollOptions);
 	});
 });
 
 router.get('/:pollId/options/:id', (req, res, next) => {
-	PollOption.findById(req.params.id, (err, pollOption) => {
-		if (err) {
-			next(err);
-		}
-		if (!pollOption) {
-			res.boom.notFound('Poll Option Resource not found');
-		}
-		res.send(pollOption);
-	});
+	PollOption.findById(req.params.id)
+		.populate('pollId')
+		.exec((err, pollOption) => {
+			if (err) {
+				return next(err);
+			}
+			if (!pollOption) {
+				res.boom.notFound('Poll Option Resource not found');
+			} else {
+				res.send(pollOption);
+			}
+		});
 });
 
 router.post(
@@ -38,17 +41,21 @@ router.post(
 		} else {
 			Poll.findById(req.params.pollId, (err, poll) => {
 				if (err) {
-					next(err);
+					return next(err);
 				}
-				PollOption.create(
-					{ value: req.body.value, pollId: poll.id, createdBy: req.user.id },
-					(err, pollOption) => {
-						if (err) {
-							next(err);
+				if (!poll) {
+					res.boom.notFound('Poll Resource not found');
+				} else {
+					PollOption.create(
+						{ value: req.body.value, pollId: poll.id, createdBy: req.user.id },
+						(err, pollOption) => {
+							if (err) {
+								return next(err);
+							}
+							res.status(201).send(pollOption);
 						}
-						res.status(201).send(pollOption);
-					}
-				);
+					);
+				}
 			});
 		}
 	}
