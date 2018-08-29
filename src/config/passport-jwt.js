@@ -13,7 +13,7 @@ passport.use(
 				if (err || !user) {
 					return done(err);
 				}
-				return done(null, user.getNotSensitiveData());
+				return done(null, user);
 			});
 		}
 	)
