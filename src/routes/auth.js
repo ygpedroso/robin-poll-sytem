@@ -33,7 +33,7 @@ router.post(
 	}
 );
 
-router.post('/login', function(req, res, _) {
+router.post('/login', (req, res, _) => {
 	passport.authenticate('local', { session: false }, (err, user, info) => {
 		if (err) {
 			return res.status(500).json({
