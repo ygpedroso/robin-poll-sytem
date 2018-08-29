@@ -8,15 +8,15 @@ passport.use(
 			usernameField: 'email',
 			passwordField: 'password',
 		},
-		function(email, password, done) {
-			User.findOne({ email }, function(err, user) {
+		(email, password, done) => {
+			User.findOne({ email }, (err, user) => {
 				if (err) {
 					return done(err);
 				}
 				if (!user) {
 					return done(null, false, { message: 'Incorrect username.' });
 				}
-				user.comparePassword(password, function(err, isMatch) {
+				user.comparePassword(password, (err, isMatch) => {
 					if (err) {
 						return done(err);
 					}
