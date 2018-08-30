@@ -10,7 +10,6 @@ const PollOption = new Schema(
 		value: {
 			type: String,
 			required: true,
-			unique: true,
 			index: true,
 		},
 		pollId: {
@@ -26,5 +25,7 @@ const PollOption = new Schema(
 	},
 	{ timestamps: true }
 );
+
+PollOption.index({ value: 1, pollId: 1 }, { unique: true });
 
 export default mongoose.model(PollOptionSchemaName, PollOption);

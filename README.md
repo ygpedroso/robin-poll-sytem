@@ -45,9 +45,10 @@ the format of `Bearer token`.
 	* Add options to polls.
 	* Close a poll.
 	* Vote on a particular option for a poll.
-3. Users can not vote more than once in a poll.
-4. Generated JWT after login lasts only 24 hours.
-5. When retrieving the list of a model, only references to other models will be in the result. On the other hand, when
+3. A poll option for a particular poll can not be repeated.
+4. Users can not vote more than once in a poll.
+5. Generated JWT after login lasts only 24 hours.
+6. When retrieving the list of a model, only references to other models will be in the result. On the other hand, when
 retrieving a single model, the reference fields will be populated with the model it makes reference to.
 
 ## Robin Poll System production url:
